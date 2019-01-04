@@ -44,12 +44,9 @@ class ExceptionHandler extends Handle{
 	
 	private function recordErrorLog(\Exception $e)
 	{
-		// Log::init([
-		// 	'type' => 'File',
-		// 	'path' => LOG_PATH,
-		// 	'level' => ['error']
-		// 	]);
-		Log::write($e->getMessage(),'error');
-		// Log::record($e->getMessage(),'error');
+		Log::init([
+			'level' => ['error']
+			]);
+		Log::error($e->getMessage());
 	}
 }

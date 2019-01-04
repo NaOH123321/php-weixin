@@ -3,8 +3,9 @@
 namespace app\api\model;
 
 use think\db;
+use think\Model;
 
-class Banner
+class Banner extends Model
 {
     // protected $hidden = ['delete_time','update_time'];
     // public function items()
@@ -17,9 +18,9 @@ class Banner
         // $banner = self::with(['items','items.img'])->find($id);
         //		$result = Db::table('banner_item')->where('banner_id','=',$id)->select();
         //		return $result;
-        
+
         $result = DB::table('banner_item')
-            ->where('banner_id','=',$id)
+            ->where('banner_id', '=', $id)
             ->select();
         return $result;
     }
