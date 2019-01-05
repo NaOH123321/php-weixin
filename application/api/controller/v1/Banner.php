@@ -17,8 +17,8 @@ class Banner
     public function getBanner($id)
     {
         (new IDMustBePostiveInt())->goCheck();
-        $banner = BannerModel::get($id);
-        // $banner = BannerModel::getBannerById($id);
+
+        $banner = BannerModel::getBannerById($id);
         if (!$banner) {
             throw new BannerMissException();
         }
