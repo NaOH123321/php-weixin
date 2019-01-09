@@ -1,5 +1,5 @@
 <?php
 
 return[
-    'img_prefix'      => 'http://localhost/zerg',
+    'img_prefix'      => 'http://localhost/zerg/public/images',
 ];

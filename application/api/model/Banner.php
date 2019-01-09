@@ -5,7 +5,7 @@ namespace app\api\model;
 use think\db;
 use think\Model;
 
-class Banner extends Model
+class Banner extends BaseModel
 {
     protected $hidden = ['delete_time','update_time'];
     public function items()
