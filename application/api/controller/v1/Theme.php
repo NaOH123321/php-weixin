@@ -2,7 +2,8 @@
 namespace app\api\controller\v1;
 
 use app\api\validate\IDCollection;
-use think\Model;
+use app\api\model\Theme as ThemeModel;
+use app\lib\exception\ThemeException;
 
 class Theme
 {
@@ -14,10 +15,19 @@ class Theme
      *
      */
     public function getSimpleList($ids = '')
-    {   
+    {
         (new IDCollection())->goCheck();
+        $ids = explode(',', $ids);
+        $result = ThemeModel::with('topicImg,headImg')->select($ids);
+        if (count($result) == 0) {
+            throw new ThemeException();
+        }
+        return $result;
+    }
 
-        return "sadsadadasdsddsd";
+    public function getComplexOne($id)
+    {
+        return "sadsadsada";
     }
 }
 

@@ -4,9 +4,9 @@ namespace app\api\model;
 
 use think\db;
 
-class BannerItem extends BaseModel
+class Theme extends BaseModel
 {
-    // protected $hidden = ['id', 'img_id', 'banner_id', 'delete_time', 'update_time'];
+    protected $hidden = ['topic_img_id', 'head_img_id', 'delete_time', 'update_time'];
     public function topicImg()
     {
     	return $this->belongsTo('Image','topic_img_id','id');
