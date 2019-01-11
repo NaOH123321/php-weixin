@@ -4,6 +4,8 @@ namespace app\api\service;
 
 use app\lib\exception\WeChatException;
 use app\api\model\User;
+use app\lib\exception\TokenException;
+use app\lib\enum\ScopeEnum;
 
 class UserToken extends Token
 {
@@ -125,10 +127,10 @@ class UserToken extends Token
     }
 
     // 写入缓存
-    private function saveToCache($wxResult)
+    private function saveToCache($cachedValue)
     {
         $key = self::generateToken();
-        $value = json_encode($wxResult);
+        $value = json_encode($cachedValue);
         $expire_in = config('setting.token_expire_in');
         $result = cache($key, $value, $expire_in);
 
