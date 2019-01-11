@@ -2,7 +2,6 @@
 
 namespace app\lib\exception;
 
-
 class ProductException extends BaseException
 {
     public $code = 404;

@@ -2,7 +2,6 @@
 namespace app\api\controller\v1;
 
 use app\api\validate\TokenGet;
-use app\api\model\User as UserModel;
 use app\api\service\UserToken;
 
 class Token

@@ -95,7 +95,6 @@ function getRandChar($length)
 }
 
 
-
 function fromArrayToModel($m, $array)
 {
     foreach ($array as $key => $value) {

@@ -2,10 +2,10 @@
 
 namespace app\api\service;
 
-use think\db;
 use app\lib\exception\WeChatException;
+use app\api\model\User;
 
-class UserToken
+class UserToken extends Token
 {
     protected $code;
     protected $wxLoginUrl;
@@ -98,5 +98,46 @@ class UserToken
         $cachedValue = $this->prepareCachedValue($wxResult, $uid);
         $token = $this->saveToCache($cachedValue);
         return $token;
+    }
+
+    private function prepareCachedValue($wxResult, $uid)
+    {
+        $cachedValue = $wxResult;
+        $cachedValue['uid'] = $uid;
+        $cachedValue['scope'] = ScopeEnum::User;
+        return $cachedValue;
+    }
+
+    // 创建新用户
+    private function newUser($openid)
+    {
+        // 有可能会有异常，如果没有特别处理
+        // 这里不需要try——catch
+        // 全局异常处理会记录日志
+        // 并且这样的异常属于服务器异常
+        // 也不应该定义BaseException返回到客户端
+        $user = User::create(
+            [
+                'openid' => $openid
+            ]
+        );
+        return $user->id;
+    }
+
+    // 写入缓存
+    private function saveToCache($wxResult)
+    {
+        $key = self::generateToken();
+        $value = json_encode($wxResult);
+        $expire_in = config('setting.token_expire_in');
+        $result = cache($key, $value, $expire_in);
+
+        if (!$result) {
+            throw new TokenException([
+                'msg' => '服务器缓存异常',
+                'errorCode' => 10005
+            ]);
+        }
+        return $key;
     }
 }
