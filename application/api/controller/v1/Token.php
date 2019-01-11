@@ -5,7 +5,7 @@ use app\api\validate\TokenGet;
 use app\api\model\User as UserModel;
 use app\api\service\UserToken;
 
-class Theme
+class Token
 {
     /**
      * 用户获取令牌（登陆）

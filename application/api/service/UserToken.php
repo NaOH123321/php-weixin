@@ -3,6 +3,7 @@
 namespace app\api\service;
 
 use think\db;
+use app\lib\exception\WeChatException;
 
 class UserToken
 {
@@ -54,5 +55,48 @@ class UserToken
                 return $this->grantToken($wxResult);
             }
         }
+    }
+
+        // 处理微信登陆异常
+    // 那些异常应该返回客户端，那些异常不应该返回客户端
+    // 需要认真思考
+    private function processLoginError($wxResult)
+    {
+        throw new WeChatException(
+            [
+                'msg' => $wxResult['errmsg'],
+                'errorCode' => $wxResult['errcode']
+            ]
+        );
+    }
+
+        // 颁发令牌
+    // 只要调用登陆就颁发新令牌
+    // 但旧的令牌依然可以使用
+    // 所以通常令牌的有效时间比较短
+    // 目前微信的express_in时间是7200秒
+    // 在不设置刷新令牌（refresh_token）的情况下
+    // 只能延迟自有token的过期时间超过7200秒（目前还无法确定，在express_in时间到期后
+    // 还能否进行微信支付
+    // 没有刷新令牌会有一个问题，就是用户的操作有可能会被突然中断
+    private function grantToken($wxResult)
+    {
+        // 此处生成令牌使用的是TP5自带的令牌
+        // 如果想要更加安全可以考虑自己生成更复杂的令牌
+        // 比如使用JWT并加入盐，如果不加入盐有一定的几率伪造令牌
+        //        $token = Request::instance()->token('token', 'md5');
+        $openid = $wxResult['openid'];
+        $user = User::getByOpenID($openid);
+        if (!$user)
+            // 借助微信的openid作为用户标识
+            // 但在系统中的相关查询还是使用自己的uid
+        {
+            $uid = $this->newUser($openid);
+        } else {
+            $uid = $user->id;
+        }
+        $cachedValue = $this->prepareCachedValue($wxResult, $uid);
+        $token = $this->saveToCache($cachedValue);
+        return $token;
     }
 }
