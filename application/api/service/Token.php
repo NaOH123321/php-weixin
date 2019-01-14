@@ -5,9 +5,10 @@ namespace app\api\service;
 use think\facade\Request;
 use think\facade\Cache;
 use think\Exception;
-use app\lib\exception\TokenException;
 use app\lib\enum\ScopeEnum;
+use app\lib\exception\TokenException;
 use app\lib\exception\ParameterException;
+use app\lib\exception\ForbiddenException;
 
 class Token
 {
@@ -18,6 +19,20 @@ class Token
         $timestamp = $_SERVER['REQUEST_TIME_FLOAT'];
         $tokenSalt = config('secure.token_salt');
         return md5($randChar . $timestamp . $tokenSalt);
+    }
+
+    public static function needPrimaryScope()
+    {
+        $scope = self::getCurrentTokenVar('scope');
+        if ($scope) {
+            if ($scope >= ScopeEnum::User) {
+                return true;
+            } else {
+                throw new ForbiddenException();
+            }
+        } else {
+            throw new TokenException();
+        }
     }
 
     public static function getCurrentTokenVar($key)

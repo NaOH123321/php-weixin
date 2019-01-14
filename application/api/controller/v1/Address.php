@@ -6,9 +6,19 @@ use app\api\service\Token as TokenService;
 use app\api\validate\AddressNew;
 use app\lib\exception\UserException;
 use app\lib\exception\SuccessMessage;
+use think\Controller;
 
-class Address
+class Address extends Controller
 {
+    protected $beforeActionList = [
+        'checkPrimaryScope' => ['only' => 'createOrUpdateAddress']
+    ];
+
+    protected function checkPrimaryScope()
+    {
+        TokenService::needPrimaryScope();
+    }
+
     /**
      * 更新或者创建用户收获地址
      */
