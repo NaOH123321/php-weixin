@@ -2,8 +2,6 @@
 
 namespace app\api\model;
 
-use think\db;
-
 class Product extends BaseModel
 {
     protected $hidden = ['category_id', 'from', 'create_time', 'delete_time', 'update_time', 'pivot'];

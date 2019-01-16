@@ -2,8 +2,6 @@
 
 namespace app\api\model;
 
-use think\db;
-
 class Category extends BaseModel
 {
     protected $hidden = ['create_time', 'delete_time', 'update_time'];
