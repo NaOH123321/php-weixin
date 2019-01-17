@@ -9,6 +9,7 @@ use app\api\model\UserAddress;
 use app\api\model\Order as OrderModel;
 use app\api\model\OrderProduct;
 use think\Exception;
+use think\Db;
 
 /**
  * 订单类
@@ -44,15 +45,16 @@ class Order
         }
 
         $orderSnap = $this->snapOrder($status);
-        $status = self::createOrderByTrans($orderSnap);
-        $status['pass'] = true;
-        return $status;
+        $order = self::createOrderByTrans($orderSnap);
+        $order['pass'] = true;
+        return $order;
     }
 
     // 创建订单时没有预扣除库存量，简化处理
     // 如果预扣除了库存量需要队列支持，且需要使用锁机制
     private function createOrderByTrans($snap)
     {
+        Db::startTrans();
         try {
             $orderNo = $this->makeOrderNo();
             $order = new OrderModel();
@@ -74,12 +76,14 @@ class Order
             }
             $orderProduct = new OrderProduct();
             $orderProduct->saveAll($this->oProducts);
+            Db::commit();
             return [
                 'order_no' => $orderNo,
                 'order_id' => $orderID,
                 'create_time' => $create_time
             ];
         } catch (Exception $ex) {
+            DB::rollback();
             throw $ex;
         }
     }
@@ -174,7 +178,7 @@ class Order
             'snapImg' => '',
         ];
 
-        $snap['orderPrice'] = $status['totalPrice'];
+        $snap['orderPrice'] = $status['orderPrice'];
         $snap['totalCount'] = $status['totalCount'];
         $snap['pStatus'] = $status['pStatusArray'];
         $snap['snapAddress'] = json_encode($this->getUserAddress());
