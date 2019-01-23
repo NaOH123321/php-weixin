@@ -10,12 +10,12 @@ use app\lib\enum\OrderStatusEnum;
 use think\facade\Log;
 use think\Loader;
 
-include '../extend/WxPay/WxPay.Api.php';
-include '../extend/WxPay/WxPay.Config.php';
-use WxPay\WxPayUnifiedOrder;
-use WxPay\WxPayApi;
-use WxPay\WxPayConfig;
-use WxPay\WxPayJsApiPay;
+include '../extend/wxpay/WxPay.Api.php';
+include '../extend/wxpay/WxPay.Config.php';
+use wxpay\WxPayUnifiedOrder;
+use wxpay\WxPayApi;
+use wxpay\WxPayConfig;
+use wxpay\WxPayJsApiPay;
 
 // Loader::import('WxPay.WxPay', EXTEND_PATH, '.Api.php');
 
