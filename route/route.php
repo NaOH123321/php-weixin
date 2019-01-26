@@ -20,14 +20,17 @@ Route::group('api/:version/product', function () {
     Route::get('/by_category', 'api/:version.Product/getAllInCategory');
 });
 
-
 Route::get('api/:version/category/all', 'api/:version.Category/getAllCategories');
 
 Route::post('api/:version/token/user', 'api/:version.Token/getToken');
 
 Route::post('api/:version/address', 'api/:version.Address/createOrUpdateAddress');
 
-Route::post('api/:version/order', 'api/:version.Order/placeOrder');
+Route::group('api/:version/order', function () {
+    Route::post('', 'api/:version.Order/placeOrder');
+    Route::get('/by_user', 'api/:version.Order/getSummaryByUser');
+    Route::get('/:id', 'api/:version.Order/getDetail', [], ['id' => '\d+']);
+});
 
 Route::post('api/:version/pay/pre_order', 'api/:version.Pay/getPreOrder');
 Route::post('api/:version/pay/notify', 'api/:version.Pay/redirectNotify');
