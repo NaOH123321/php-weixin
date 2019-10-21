@@ -1,7 +1,9 @@
 <?php
 namespace app\api\controller\v1;
 
+use app\api\controller\BaseController;
 use app\api\model\User as UserModel;
+use app\api\model\UserAddress;
 use app\api\service\Token as TokenService;
 use app\api\validate\AddressNew;
 use app\lib\exception\UserException;
@@ -12,6 +14,24 @@ class Address extends BaseController
     protected $beforeActionList = [
         'checkPrimaryScope' => ['only' => 'createOrUpdateAddress']
     ];
+
+    /**
+     * 获取用户地址信息
+     * @return UserAddress
+     * @throws UserException
+     */
+    public function getUserAddress(){
+        $uid = TokenService::getCurrentUid();
+        $userAddress = UserAddress::where('user_id', $uid)
+            ->find();
+        if(!$userAddress){
+            throw new UserException([
+                'msg' => '用户地址不存在',
+                'errorCode' => 60001
+            ]);
+        }
+        return $userAddress;
+    }
 
     /**
      * 更新或者创建用户收获地址
@@ -39,6 +59,7 @@ class Address extends BaseController
             // 新增的save方法和更新的save方法并不一样
             // 新增的save来自于关联关系
             // 更新的save来自于模型
+            $data['update_time'] = time();
             $user->address->save($data);
         }
         return json(new SuccessMessage(), 201);
